@@ -34,7 +34,7 @@
 
 // TODO: sane values
 #ifndef FINKEN_SYSTEM_P
-#define FINKEN_SYSTEM_P 0.075
+#define FINKEN_SYSTEM_P 0.1
 #endif
 
 #ifndef FINKEN_SYSTEM_I
@@ -105,15 +105,27 @@ float distance_z_old = 0.0;
 
 void update_actuators_set_point()
 {
-	/* front , back */
-	float error_x =   finken_sensor_model.distance_d_front - finken_sensor_model.distance_d_back;
-	/* left , right */
-	float error_y =   finken_sensor_model.distance_d_left - finken_sensor_model.distance_d_right;
+	/* Wall reaction */
+	/* front  */
+	float error_x;
+		if (finken_sensor_model.distance_d_front - 100 == 0) {
+			error_x = 0;
+		} else {
+			error_x = 200 / (finken_sensor_model.distance_d_front - 100);
+		}
+			/* right */
+		float error_y;
+		if (finken_sensor_model.distance_d_right - 100 == 0) {
+			error_y = 0;
+		} else {
+			error_y = -200 / (finken_sensor_model.distance_d_right - 100);
+		}
 
 	finken_actuators_set_point.beta = error_x * FINKEN_SYSTEM_P;
-	finken_actuators_set_point.alpha = error_y * FINKEN_SYSTEM_P;
+	finken_actuators_set_point.alpha = 0;//error_y * FINKEN_SYSTEM_P;
 
 
+	/*  Height control  */
 	float error_z = finken_system_set_point.distance_z - finken_system_model.distance_z; 
 	if(autopilot_mode == AP_MODE_NAV && stage_time > 0) 
 	{
