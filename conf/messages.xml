@@ -2014,7 +2014,7 @@
     <field name="theta"  type="float" alt_unit="degree"/>
     <field name="thrust" type="float" alt_unit="degree"/>
   </message>
-  <message name="OPTIC_FLOW_EST" id="228">
+  <!--<message name="OPTIC_FLOW_EST" id="228">
     <field name="fps"         type="float"/>
     <field name="corner_cnt"  type="uint16"/>
     <field name="tracked_cnt" type="uint16"/>
@@ -2026,7 +2026,7 @@
     <field name="vel_y"       type="float" unit="cm/s"/>
     <field name="cmd_phi"     type="int32" alt_unit="deg" alt_unit_coef="0.0139882"/>
     <field name="cmd_theta"   type="int32" alt_unit="deg" alt_unit_coef="0.0139882"/>
-  </message>
+  </message>-->
 
   <!--229 is free -->
 
