@@ -84,9 +84,9 @@ struct pid_controller leftPIDController;
 
 //this is for creating the different pids and assigning minmax-values to them.
 void init_pid() {
-	initWallController(&frontPIDController);
-	initWallController(&rightPIDController);
-	initWallController(&backPIDController);
+//	initWallController(&frontPIDController);
+//	initWallController(&rightPIDController);
+//	initWallController(&backPIDController);
 	initWallController(&leftPIDController);
 }
 
@@ -155,9 +155,15 @@ float max_(float x, float y) {
 	return (x < y) ? y : x;
 }
 
+float t_1, t_2, t_3, t_4;
+
 float pid_planar(float sonar_dist, struct pid_controller *pid) {
 	float error = max_(TOLERABLE_PROXY_DIST - sonar_dist, 0.0);
-	return adjust(error, 0.03, pid);		//return pitch or roll
+//	return adjust(error, 0.03, pid);		//return pitch or roll
+
+	t_3 = TOLERABLE_PROXY_DIST - sonar_dist;
+
+	return adjust(TOLERABLE_PROXY_DIST - sonar_dist, 0.03, pid);
 }
 
 void reset(struct pid_controller *con) {
@@ -165,6 +171,7 @@ void reset(struct pid_controller *con) {
 		con->ringbuffer[i] = 0;
 	}
 }
+
 
 void update_actuators_set_point() {
 	finken_actuators_set_point.beta = (float) radio_control.values[RADIO_ROLL] / 13000 * 10;
@@ -184,28 +191,32 @@ void update_actuators_set_point() {
 	//finken_actuators_set_point.thrust -= FINKEN_VERTICAL_VELOCITY_FACTOR * (velocity_z / (sqrt(1 + velocity_z * velocity_z)));
 
 	//reset all value of PID controller after changing the flight mode
-	if (finken_system_model.reset) {
-		reset(&frontPIDController);
-		reset(&backPIDController);
-		reset(&leftPIDController);
-		reset(&rightPIDController);
-		reset(&xFinkenFloatController);
-		reset(&yFinkenFloatController);
-		finken_system_model.reset = false;
-	}
+//	if (finken_system_model.reset) {
+//		reset(&frontPIDController);
+//		reset(&backPIDController);
+//		reset(&leftPIDController);
+//		reset(&rightPIDController);
+//		reset(&xFinkenFloatController);
+//		reset(&yFinkenFloatController);
+//		finken_system_model.reset = false;
+//	}
 
-//	if (finken_system_model.distance_z > MIN_HEIGHT) {
-	if(0){
-		float front = pid_planar(finken_sensor_model.distance_d_front, &frontPIDController);
-		float back = pid_planar(finken_sensor_model.distance_d_back, &backPIDController);
-		float xDegree = ((front - back) / 141) * 12;
-		finken_actuators_set_point.alpha += xDegree;	//pitch
+//	if (finken_system_model.distance_z > MIN_HEIGHT)
+//	{
+//	if(0){
+//		float front = pid_planar(finken_sensor_model.distance_d_front, &frontPIDController);
+//		float back = pid_planar(finken_sensor_model.distance_d_back, &backPIDController);
+//		float xDegree = ((front - back) / 141) * 12;
+//		finken_actuators_set_point.alpha += xDegree;	//pitch
 
+		t_4 = 1.0;
 		float left = pid_planar(finken_sensor_model.distance_d_left, &leftPIDController);
-		float right = pid_planar(finken_sensor_model.distance_d_right, &rightPIDController);
+		t_1 = left;
+		float right = 0.0; //pid_planar(finken_sensor_model.distance_d_right, &rightPIDController);
 		float yDegree = ((left - right) / 141) * 12;
+		t_2 = yDegree;
 		finken_actuators_set_point.beta += yDegree;	//roll
-	}
+//	}
 
 	distance_z_old = finken_system_model.distance_z;
 
@@ -215,8 +226,16 @@ void update_actuators_set_point() {
 void send_finken_system_model_telemetry(struct transport_tx *trans, struct link_device* link) {
 	trans = trans;
 	link = link;
-	DOWNLINK_SEND_FINKEN_SYSTEM_MODEL(DefaultChannel, DefaultDevice, &finken_system_model.distance_z, &finken_system_model.velocity_theta, &finken_system_model.velocity_x,
-			&finken_system_model.velocity_y, &finken_actuators_set_point.alpha, &finken_actuators_set_point.beta, &finken_actuators_set_point.thrust,
+	DOWNLINK_SEND_FINKEN_SYSTEM_MODEL(DefaultChannel, DefaultDevice,
+//			&finken_system_model.distance_z,
+//			&finken_system_model.velocity_theta,
+			&t_1,
+			&t_2,
+			&t_3,
+			&t_4,
+//			&finken_system_model.velocity_x,
+//			&finken_system_model.velocity_y,
+			&finken_actuators_set_point.alpha, &finken_actuators_set_point.beta, &finken_actuators_set_point.thrust,
 			&finken_system_set_point.distance_z);
 }
 

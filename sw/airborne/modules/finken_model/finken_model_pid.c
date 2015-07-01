@@ -21,6 +21,7 @@ void setMinMax(float minParam, float maxParam, struct pid_controller *con) {
  * This is the main method of the pid_controller. the error should be the distance to the desired distance.
  */
 float adjust(float error, float time_step, struct pid_controller *con) {
+
 	con->t = time_step;
 //	con->integral = con->integral + (error * time_step);
 	float derivative = (error - con->previousError) / time_step;
@@ -32,7 +33,7 @@ float adjust(float error, float time_step, struct pid_controller *con) {
 	con->previousError = error;
 	con->pPart = con->p * error;
 	con->dPart = con->d * derivative;
-	float res = con->pPart + con->iPart + con->dPart;
+	float res = con->pPart + con->iPart * con->i + con->dPart;
 
 	if (con->checkMinMax == 1) {
 		if (res < con->min) {
@@ -47,10 +48,16 @@ float adjust(float error, float time_step, struct pid_controller *con) {
 }
 
 void initWallController(struct pid_controller *con) {
-	con->p = 4.7;
-	con->i = 0;
-	con->d = 1;
-	float cap = 0;
+
+
+	con->p = 6.0;
+	con->i = 0.0;
+	con->d = 0.0;
+
+//	con->p = 4.7;
+//	con->i = 0;
+//	con->d = 1;
+	float cap = 999;
 	con->min = -cap;
 	con->max = cap;
 	con->checkMinMax = 1;
