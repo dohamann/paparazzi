@@ -63,7 +63,7 @@
 
 struct system_model_s finken_system_model;
 struct system_model_s finken_system_set_point;
- bool finken_system_model_control_height;
+bool finken_system_model_control_height;
 float thrust_k_dec1 = 0.0;
 float thrust_k_dec2 = 0.0;
 float error_z_k_dec1 = 0.0;
@@ -76,8 +76,6 @@ float DEG_TO_GRAD_COEFF = 0.01745329251; //math.pi / 180;
 float MAX_PROXY_DIST = 5.00;		//max measurable distance from the sonar
 float MAX_IR_DIST = 2.00;			//max measurable distance from IR sensor
 float FLIGHT_HEIGHT = 1.30;	//the target altitude we will try to maintain at all times
-
-struct pid_controller zPIDController;
 
 void finken_system_model_init(void) {
 	finken_system_model.distance_z = 0.0;
@@ -126,27 +124,15 @@ float distance_z_old = 0.0;
 
 float oldIRDist = 0;
 
-//This method is for the height controller. Since we will use a different one, it is useless, but not yet deleted. :D
-float pid_thrust(float irDist) {
-	float target, curr, error;
-
-	float dt = 0.1;	//Todo find correct time step
-
-	// height control
-	target = (FLIGHT_HEIGHT - irDist) / dt;
-	curr = (irDist - oldIRDist) / dt;
-	error = target - curr;
-	float targetThrottle = adjust(error, 1 / FINKEN_SYSTEM_UPDATE_FREQ,
-			&zPIDController);
-	return 50 + targetThrottle;
-}
-
 void update_actuators_set_point() {
-	float radioBeta = (float) radio_control.values[RADIO_ROLL] / 13000 * 10;
-	float radioAlpha = (float) radio_control.values[RADIO_PITCH] / 13000 * 10;
+	float radioBeta = (float) (radio_control.values[RADIO_ROLL] / 13000.0) * 20;
+	float radioAlpha = (float) (radio_control.values[RADIO_PITCH] / 13000.0) * 20;
 
 	alphaComponents[0] = radioAlpha;
 	betaComponents[0] = radioBeta;
+	updateActuators();
+
+
 	float error_z_k = finken_system_set_point.distance_z - finken_system_model.distance_z;
 	/*float error_z = finken_system_set_point.distance_z - finken_system_model.distance_z;
 	 if (autopilot_mode == AP_MODE_NAV && stage_time > 0) {
@@ -164,12 +150,14 @@ void update_actuators_set_point() {
 
 
 	/*distance_z_old = finken_system_model.distance_z;*/
-//	if (!finken_system_model_control_height) {
-//		error_z_k_dec1 = 0;
-//		error_z_k_dec2 = 0;
-//		thrust_k_dec1 = 0;
-//		thrust_k_dec1 = 0;
-//	}
+
+	if (!finken_system_model_control_height) {
+		error_z_k_dec1 = 0;
+		error_z_k_dec2 = 0;
+		thrust_k_dec1 = 0;
+		thrust_k_dec1 = 0;
+	}
+
 
 	float thrust_k = 1.6552 * thrust_k_dec1 - 0.6552 * thrust_k_dec2 + 209.0553 * error_z_k - 413.7859 * error_z_k_dec1 + 204.7450 * error_z_k_dec2;
 
@@ -186,7 +174,6 @@ void update_actuators_set_point() {
 	} else {
 		finken_actuators_set_point.thrust = FINKEN_THRUST_DEFAULT + thrust_k / 100;
 	}
-	updateActuators();
 // TODO: Theta
 }
 

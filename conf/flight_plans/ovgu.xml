@@ -24,19 +24,22 @@
 		<block name="inair">
 			<attitude pitch="finken_actuators_model.alpha" roll="finken_actuators_model.beta"
 				throttle="finken_actuators_model.thrust" until="FALSE" vmode="throttle" />
-				<set value="1"	var="finken_system_model_control_height"/>
+			<set value="1"	var="finken_system_model_control_height"/>
+			<set value="0" var="finken_actuators_take_off" />
 		</block>
-
+		
 		<block key="t" name="Takeoff" strip_button="Takeoff" strip_icon="takeoff.png">
 			<set value="0" var="autopilot_flight_time" />
 			<set value="0.5" var="finken_system_set_point.distance_z" />
-			<attitude pitch="0" roll="0"
+			<set value="1" var="finken_actuators_take_off" />
+
+			<attitude pitch="finken_actuators_model.alpha" roll="finken_actuators_model.beta"
 				throttle="compensate_battery_drop(0.37)" until="stage_time > 2"
 				vmode="throttle" />
-			<attitude pitch="0" roll="0"
-				throttle="compensate_battery_drop(0.41)" until="stage_time > 2"
+			<attitude pitch="finken_actuators_model.alpha" roll="finken_actuators_model.beta"
+				throttle="compensate_battery_drop(0.45)" until="stage_time > 2"
 				vmode="throttle"/>
-				<set value="1" var="finken_system_model.reset"/>
+			<set value="1" var="finken_system_model.reset"/>
 			<deroute block="inair" />
 		</block>
 

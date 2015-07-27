@@ -44,6 +44,9 @@ struct actuators_model_s {
 extern struct actuators_model_s finken_actuators_model;
 extern struct actuators_model_s finken_actuators_set_point;
 
+extern bool finken_actuators_take_off;
+
+
 extern void finken_actuators_model_init(void);
 extern void finken_actuators_model_periodic(void);
 

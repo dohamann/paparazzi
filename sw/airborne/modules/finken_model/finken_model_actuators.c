@@ -30,6 +30,8 @@ struct actuators_model_s finken_actuators_set_point;
 float alphaComponents[COMP_LENGTH];
 float betaComponents[COMP_LENGTH];
 
+bool finken_actuators_take_off;
+
 void finken_actuators_model_init(void) {
 	finken_actuators_model.alpha  = 0;
 	finken_actuators_model.beta   = 0;
@@ -72,14 +74,22 @@ void send_finken_actuators_model_telemetry(struct transport_tx *trans, struct li
 
 float sum(float * array){
 	float sum = 0;
-	for(int i = 0; i < COMP_LENGTH;i++){
+	for(int i = 0; i < COMP_LENGTH;++i){
 		sum += array[i];
 	}
 	return sum;
 }
 
 void updateActuators(){
-	finken_actuators_model.beta = sum(betaComponents);
-	finken_actuators_model.alpha = sum(alphaComponents);
+	if(!finken_actuators_take_off)
+	{
+		finken_actuators_model.beta = sum(betaComponents);
+		finken_actuators_model.alpha = sum(alphaComponents);
+	}
+	else
+	{
+		finken_actuators_model.beta = betaComponents[0];
+		finken_actuators_model.alpha = alphaComponents[0];
+	}
 }
 
