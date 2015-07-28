@@ -132,24 +132,7 @@ void update_actuators_set_point() {
 	betaComponents[0] = radioBeta;
 	updateActuators();
 
-
 	float error_z_k = finken_system_set_point.distance_z - finken_system_model.distance_z;
-	/*float error_z = finken_system_set_point.distance_z - finken_system_model.distance_z;
-	 if (autopilot_mode == AP_MODE_NAV && stage_time > 0) {
-	 sum_error_z += error_z;
-	 } else {
-	 sum_error_z = 0;
-	 }*/
-
-	/*
-	 float velocity_z = (finken_system_model.distance_z - distance_z_old) * FINKEN_SYSTEM_UPDATE_FREQ;
-
-	 finken_actuators_set_point.thrust = FINKEN_THRUST_DEFAULT + error_z * FINKEN_THRUST_P;
-	 finken_actuators_set_point.thrust += sum_error_z * FINKEN_THRUST_I / FINKEN_SYSTEM_UPDATE_FREQ;
-	 finken_actuators_set_point.thrust -= FINKEN_VERTICAL_VELOCITY_FACTOR * (velocity_z / (sqrt(1 + velocity_z * velocity_z)));*/
-
-
-	/*distance_z_old = finken_system_model.distance_z;*/
 
 	if (!finken_system_model_control_height) {
 		error_z_k_dec1 = 0;
@@ -166,15 +149,14 @@ void update_actuators_set_point() {
 
 	thrust_k_dec2 = thrust_k_dec1;
 	thrust_k_dec1 = thrust_k;
+
 	if (FINKEN_THRUST_DEFAULT + thrust_k / 100 < 0.2) {
 		finken_actuators_set_point.thrust = 0.2;
 	} else if (FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8) {
 		finken_actuators_set_point.thrust = 0.8;
-		//TODO anti-windup
 	} else {
 		finken_actuators_set_point.thrust = FINKEN_THRUST_DEFAULT + thrust_k / 100;
 	}
-// TODO: Theta
 }
 
 void send_finken_system_model_telemetry(struct transport_tx *trans,
