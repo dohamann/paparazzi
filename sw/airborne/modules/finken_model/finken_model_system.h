@@ -35,23 +35,28 @@
 #include "float_controller.h"
 #include "wall_avoidance_controller.h"
 
+/**
+ * \brief The system model defines the state of the aircraft.
+ */
 struct system_model_s {
-  float distance_z;
-  float velocity_theta;
-  float velocity_x;
-  float velocity_y;
-  bool reset;
+  float distance_z;		///< height of the aircraft, distance to ground
+  float velocity_theta;	///< velocity of turning around the z axis.
+  float velocity_x;		///< movement velocity at x axis
+  float velocity_y;		///< movement velocitz at y axis
+  bool reset;			///< reset the wall avoidance controller at the beginning of flight mode "inair"
 };
-extern bool finken_system_model_control_height;
 
-extern struct system_model_s finken_system_model;
-extern struct system_model_s finken_system_set_point;
+extern bool finken_system_model_control_height;	///< is only true in flight mode "inair". starts height control
 
-extern void finken_system_model_init(void);
-extern void finken_system_model_periodic(void);
-void update_finken_system_model(void);
+extern struct system_model_s finken_system_model;	///< the current state of the aircraft
+extern struct system_model_s finken_system_set_point;	///< the desired (next) state of the aircraft
 
-float height_controller();
+extern void finken_system_model_init(void);		///< initialize this module. start telemetry.
+extern void finken_system_model_periodic(void);	///< the main loop of this module.
+void update_finken_system_model(void);			///< update the system model of this aircraft by using the sensor informations.
+
+void update_actuators_set_point();				///< include the planar radio control in the actuators and update height control
+float height_controller();						///< update the height controller.
 
 extern void send_finken_system_model_telemetry(struct transport_tx *trans, struct link_device* link);
 extern void send_x_pid_telemetry(struct transport_tx *trans, struct link_device *link);
