@@ -70,12 +70,7 @@ float error_z_k_dec1 = 0.0;
 float error_z_k_dec2 = 0.0;
 
 void update_actuators_set_point(void);
-
-//all init
-float DEG_TO_GRAD_COEFF = 0.01745329251; //math.pi / 180;
-float MAX_PROXY_DIST = 5.00;		//max measurable distance from the sonar
-float MAX_IR_DIST = 2.00;			//max measurable distance from IR sensor
-float FLIGHT_HEIGHT = 1.30;	//the target altitude we will try to maintain at all times
+float height_controller();
 
 void finken_system_model_init(void) {
 	finken_system_model.distance_z = 0.0;
@@ -114,24 +109,8 @@ void update_finken_system_model(void) {
 	finken_system_model.velocity_y = finken_sensor_model.velocity_y;
 }
 
-/*
- * Use finken_system_set_point to calculate new actuator settings
- */
-float sum_error_x = 0;
-float sum_error_y = 0;
-float sum_error_z = 0;
-float distance_z_old = 0.0;
-
-float oldIRDist = 0;
-
-void update_actuators_set_point() {
-	float radioBeta = (float) (radio_control.values[RADIO_ROLL] / 13000.0) * 20;
-	float radioAlpha = (float) (radio_control.values[RADIO_PITCH] / 13000.0) * 20;
-
-	alphaComponents[0] = radioAlpha;
-	betaComponents[0] = radioBeta;
-	updateActuators();
-
+float height_controller()
+{
 	float error_z_k = finken_system_set_point.distance_z - finken_system_model.distance_z;
 
 	if (!finken_system_model_control_height) {
@@ -141,7 +120,6 @@ void update_actuators_set_point() {
 		thrust_k_dec1 = 0;
 	}
 
-
 	float thrust_k = 1.6552 * thrust_k_dec1 - 0.6552 * thrust_k_dec2 + 209.0553 * error_z_k - 413.7859 * error_z_k_dec1 + 204.7450 * error_z_k_dec2;
 
 	error_z_k_dec2 = error_z_k_dec1;
@@ -150,13 +128,29 @@ void update_actuators_set_point() {
 	thrust_k_dec2 = thrust_k_dec1;
 	thrust_k_dec1 = thrust_k;
 
-	if (FINKEN_THRUST_DEFAULT + thrust_k / 100 < 0.2) {
-		finken_actuators_set_point.thrust = 0.2;
-	} else if (FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8) {
-		finken_actuators_set_point.thrust = 0.8;
-	} else {
-		finken_actuators_set_point.thrust = FINKEN_THRUST_DEFAULT + thrust_k / 100;
+	if (FINKEN_THRUST_DEFAULT + thrust_k / 100 < 0.2)
+	{
+		return 0.2;
 	}
+	else if (FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8)
+	{
+		return 0.8;
+	}
+	else
+	{
+		return FINKEN_THRUST_DEFAULT + thrust_k / 100;
+	}
+}
+
+void update_actuators_set_point() {
+	float radioBeta = (float) (radio_control.values[RADIO_ROLL] / 13000.0) * 20;
+	float radioAlpha = (float) (radio_control.values[RADIO_PITCH] / 13000.0) * 20;
+
+	alphaComponents[0] = radioAlpha;
+	betaComponents[0] = radioBeta;
+	updateActuators();
+
+	finken_actuators_set_point.thrust = height_controller();
 }
 
 void send_finken_system_model_telemetry(struct transport_tx *trans,
@@ -180,6 +174,7 @@ void send_x_pid_telemetry(struct transport_tx *trans, struct link_device *link) 
 			&leftPIDController.dPart, &leftPIDController.previousError,
 			&leftPIDController.res);
 }
+
 void send_float_pid_telemetry(struct transport_tx *trans,
 		struct link_device *link) {
 	trans = trans;

@@ -51,6 +51,8 @@ extern void finken_system_model_init(void);
 extern void finken_system_model_periodic(void);
 void update_finken_system_model(void);
 
+float height_controller();
+
 extern void send_finken_system_model_telemetry(struct transport_tx *trans, struct link_device* link);
 extern void send_x_pid_telemetry(struct transport_tx *trans, struct link_device *link);
 extern void send_float_pid_telemetry(struct transport_tx *trans, struct link_device *link);
