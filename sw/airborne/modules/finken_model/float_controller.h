@@ -1,3 +1,8 @@
+/**
+ * The idea behind the float_controller was to reduce drifting 
+ * and the residual velocity when dodging from a wall.
+ * Sadly it was too unstable because of the sensor quality.
+ */
 #ifndef SW_AIRBORNE_MODULES_FINKEN_MODEL_FLOAT_CONTROLLER_H_
 #define SW_AIRBORNE_MODULES_FINKEN_MODEL_FLOAT_CONTROLLER_H_
 
