@@ -109,9 +109,9 @@ void update_finken_system_model(void) {
 	finken_system_model.velocity_y = finken_sensor_model.velocity_y;
 }
 
-float height_controller()
-{
-	float error_z_k = finken_system_set_point.distance_z - finken_system_model.distance_z;
+float height_controller() {
+	float error_z_k = finken_system_set_point.distance_z
+			- finken_system_model.distance_z;
 
 	if (!finken_system_model_control_height) {
 		error_z_k_dec1 = 0;
@@ -120,7 +120,9 @@ float height_controller()
 		thrust_k_dec1 = 0;
 	}
 
-	float thrust_k = 1.6552 * thrust_k_dec1 - 0.6552 * thrust_k_dec2 + 209.0553 * error_z_k - 413.7859 * error_z_k_dec1 + 204.7450 * error_z_k_dec2;
+	float thrust_k = 1.6552 * thrust_k_dec1 - 0.6552 * thrust_k_dec2
+			+ 209.0553 * error_z_k - 413.7859 * error_z_k_dec1
+			+ 204.7450 * error_z_k_dec2;
 
 	error_z_k_dec2 = error_z_k_dec1;
 	error_z_k_dec1 = error_z_k;
@@ -128,23 +130,19 @@ float height_controller()
 	thrust_k_dec2 = thrust_k_dec1;
 	thrust_k_dec1 = thrust_k;
 
-	if (FINKEN_THRUST_DEFAULT + thrust_k / 100 < 0.2)
-	{
+	if (FINKEN_THRUST_DEFAULT + thrust_k / 100 < 0.2) {
 		return 0.2;
-	}
-	else if (FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8)
-	{
+	} else if (FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8) {
 		return 0.8;
-	}
-	else
-	{
+	} else {
 		return FINKEN_THRUST_DEFAULT + thrust_k / 100;
 	}
 }
 
 void update_actuators_set_point() {
 	float radioBeta = (float) (radio_control.values[RADIO_ROLL] / 13000.0) * 20;
-	float radioAlpha = (float) (radio_control.values[RADIO_PITCH] / 13000.0) * 20;
+	float radioAlpha = (float) (radio_control.values[RADIO_PITCH] / 13000.0)
+			* 20;
 
 	alphaComponents[0] = radioAlpha;
 	betaComponents[0] = radioBeta;
@@ -172,7 +170,7 @@ void send_x_pid_telemetry(struct transport_tx *trans, struct link_device *link) 
 	DOWNLINK_SEND_X_PID(DefaultChannel, DefaultDevice, &leftPIDController.t,
 			&leftPIDController.pPart, &leftPIDController.iPart,
 			&leftPIDController.dPart, &leftPIDController.previousError,
-			&leftPIDController.res);
+			&leftPIDController.output);
 }
 
 void send_float_pid_telemetry(struct transport_tx *trans,
@@ -182,6 +180,7 @@ void send_float_pid_telemetry(struct transport_tx *trans,
 	DOWNLINK_SEND_FLOAT_DEBUG(DefaultChannel, DefaultDevice,
 			&yFinkenFloatController.t, &yFinkenFloatController.pPart,
 			&yFinkenFloatController.iPart, &yFinkenFloatController.dPart,
-			&yFinkenFloatController.previousError, &yFinkenFloatController.res);
+			&yFinkenFloatController.previousError,
+			&yFinkenFloatController.output);
 }
 

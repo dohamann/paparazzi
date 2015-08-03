@@ -11,10 +11,15 @@ extern struct pid_controller yFinkenFloatController;
 
 extern void float_controller_init(void);
 extern void float_controller_periodic(void);
-
+/**
+ * @return The difference in distance between the current and the last timestep on the x-axis.
+ * Uses the sensor with the lowest current distance, as the sensors error is smaller for short distances.
+ */
 extern int getXDistanceDiff(void);
+/**
+ * @return The difference in distance between the current and the last timestep on the y-axis.
+ * Uses the sensor with the lowest current distance, as the sensors error is smaller for short distances.
+ */
 extern int getYDistanceDiff(void);
-
-
 
 #endif /* SW_AIRBORNE_MODULES_FINKEN_MODEL_FLOAT_CONTROLLER_H_ */

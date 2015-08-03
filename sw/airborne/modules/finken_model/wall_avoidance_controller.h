@@ -1,3 +1,9 @@
+/**
+ * Module for wall-avoidance behavior.
+ * Uses one finken_model_pid for each sonar.
+ * It uses the filtered distance values from finken_sensor_model
+ * and pushes it's output to the finken_actuators_model
+ */
 #ifndef WALLAVOIDANCECONTROLLER_H_
 #define WALLAVOIDANCECONTROLLER_H_
 
