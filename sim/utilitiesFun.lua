@@ -52,14 +52,13 @@ function newPIDController(p, i, d, errorScaleCoeff, pidScaleCoeff)
 
 		local res = (pS * errorS) + (iS * integral * timeStep) + (dS * derivative)
 		
-		--res = max *res / math.sqrt(1 + res*res)
 		
 		if(checkMinMax == 1) then -- do we need sigmoid to soften min/max clipping for discrete values?
-		  if(res < min) then
-		    res = min
+		  if(res <= min) then
+		    res = min + (max - min) / (1 + math.exp(-res))   
 		  end
-		  if (res > max) then
-		    res = max
+		  if(res >= max) then
+		    res = min + (max - min) / (1 + math.exp(-res))   
 		  end
 		end
 		
@@ -119,10 +118,7 @@ function getAsInt(feed)
   return math.floor(feed)
 end
 
--- scales input value and returns integer part, e.g:
-  -- feed = 0.1234, scaleCoeff = 10 	-> 1
-  -- feed = 0.1234, scaleCoeff = 100 	-> 12
-  -- feed = 0.1234, scaleCoeff = 10000 	-> 1234
+-- scales input value and returns integer part
 function getAsIntScaled(feed, scaleCoeff)
   return math.floor(feed * scaleCoeff)
 end
