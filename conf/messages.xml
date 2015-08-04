@@ -1866,12 +1866,11 @@
     <field name="samples"  type="uint32[]"/>
   </message>
 
-  <message name="TEST_PASSTHROUGH_STATUS" id="212">
-    <field name="io_proc_msg_cnt" type="uint32"/>
-    <field name="io_proc_err_cnt" type="uint32"/>
-    <field name="io_link_msg_cnt" type="uint32"/>
-    <field name="io_link_err_cnt" type="uint32"/>
-    <field name="rc_status"       type="uint8" values="OK|LOST|REALLY_LOST"/>
+  <message name="CHRIS_HEIGHT" id="212">
+    <field name="thrust_k_dec_1" type="float"/>
+    <field name="thrust_k_dec2" type="float"/>
+    <field name="error_z_k_dec1" type="float"/>
+    <field name="error_z_k_dec2" type="float"/>
   </message>
 
   <message name="TUNE_VERT" id="213">
@@ -2238,11 +2237,11 @@
    <message name="FLOAT_DEBUG" id="254">
     <description>Values of the wall/collision-avoidance pid-controller</description>
     <field name="timestep" type="uint32"/>
-    <field name="p" type="float"/>
-    <field name="i" type="float"/>
-    <field name="d" type="float"/>
+    <field name="thrust_k_dec1" type="float"/>
+    <field name="thrust_k_dec2" type="float"/>
+    <field name="error_z_k_dec1" type="float"/>
     <field name="error" type="float"/>
-    <field name="out" type="float"/>
+    <field name="error_z_k_dec2" type="float"/>
   </message>
 
 

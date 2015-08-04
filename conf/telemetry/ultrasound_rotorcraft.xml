@@ -23,6 +23,7 @@
 <!-- 			<message name="SONAR_ARRAY" period="0.3" /> -->
 		</mode>
 		<mode name="pids" key_press="p">
+			<message name="CHRIS_HEIGHT" period="0.5" />
 			<message name="FLOAT_DEBUG" period="0.3" />
 			<message name="X_PID" period="0.3" />
 			<message name="FINKEN_SENSOR_MODEL" period="0.3" />

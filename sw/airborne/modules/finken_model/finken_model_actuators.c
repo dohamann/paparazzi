@@ -23,6 +23,7 @@
 #include "modules/finken_model/finken_model_actuators.h"
 #include "subsystems/datalink/telemetry.h"
 #include "subsystems/electrical.h"
+#include "subsystems/navigation/common_flight_plan.h"
 
 struct actuators_model_s finken_actuators_model;
 struct actuators_model_s finken_actuators_set_point;
@@ -81,13 +82,13 @@ float sum(float * array) {
 }
 
 void updateActuators() {
-	if (nav_block != 2) 	//not take_off
-	{
+//	if (nav_block != 2) 	//not take_off
+//	{
 		finken_actuators_model.beta = sum(betaComponents);
 		finken_actuators_model.alpha = sum(alphaComponents);
-	} else {
-		finken_actuators_model.beta = betaComponents[0];
-		finken_actuators_model.alpha = alphaComponents[0];
-	}
+//	} else {
+//		finken_actuators_model.beta = betaComponents[0];
+//		finken_actuators_model.alpha = alphaComponents[0];
+//	}
 }
 

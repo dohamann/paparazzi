@@ -35,7 +35,7 @@
 #include <math.h>
 
 #include "subsystems/datalink/downlink.h"
-
+#include "inttypes.h"
 
 // TODO: sane values
 #ifndef FINKEN_SYSTEM_P
@@ -94,8 +94,7 @@ void finken_system_model_init(void) {
 }
 
 void finken_system_model_periodic(void) {
-	if (autopilot_mode != AP_MODE_NAV)
-		finken_system_model_control_height = 0;
+//	if (autopilot_mode != AP_MODE_NAV)
 	update_finken_system_model();
 	update_actuators_set_point();
 }
@@ -112,29 +111,33 @@ void update_finken_system_model(void) {
 
 float height_controller() {
 
-	float error_z_k = finken_system_set_point.distance_z - finken_system_model.distance_z;
+	float error_z_k = finken_system_set_point.distance_z
+			- finken_system_model.distance_z;
 
-	float thrust_k = 0.411765 * thrust_k_dec1 - 1.411765 * thrust_k_dec2 + 208.830065 * error_z_k - 423.516339 * error_z_k_dec1 + 214.712418 * error_z_k_dec2;
+	float thrust_k = 1.411765 * thrust_k_dec1 - 0.411765 * thrust_k_dec2
+			+ 214.712418 * error_z_k - 423.516339 * error_z_k_dec1
+			+ 208.830065 * error_z_k_dec2;
 
-	if( nav_block != 1 )	//not inair
+	uint8_t inAirBlock = 1;
+	if (nav_block != inAirBlock) {
 		thrust_k = 0;
-
+	}
 	error_z_k_dec2 = error_z_k_dec1;
 	error_z_k_dec1 = error_z_k;
 
-	thrust_k_dec2=thrust_k_dec1;
-	thrust_k_dec1=thrust_k;
+	thrust_k_dec2 = thrust_k_dec1;
+	thrust_k_dec1 = thrust_k;
 
-	if (FINKEN_THRUST_DEFAULT + thrust_k /100 < 0.2 || FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8)
-		thrust_k -= 2*(208.830065 - 423.516339 + 214.712418)*(error_z_k+error_z_k_dec1+error_z_k_dec2)/3;
+	if (FINKEN_THRUST_DEFAULT + thrust_k / 100 < 0.2
+			|| FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8)
+		thrust_k -= 2 * (208.830065 - 423.516339 + 214.712418)
+				* (error_z_k + error_z_k_dec1 + error_z_k_dec2) / 3;
 
-	if(FINKEN_THRUST_DEFAULT + thrust_k / 100 < 0.2){
+	if (FINKEN_THRUST_DEFAULT + thrust_k / 100 < 0.2) {
 		return 0.2;
-	}
-	else if(FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8){
+	} else if (FINKEN_THRUST_DEFAULT + thrust_k / 100 > 0.8) {
 		return 0.8;
-	}
-	else{
+	} else {
 		return FINKEN_THRUST_DEFAULT + thrust_k / 100;
 	}
 
@@ -206,10 +209,9 @@ void send_float_pid_telemetry(struct transport_tx *trans,
 		struct link_device *link) {
 	trans = trans;
 	link = link;
-	DOWNLINK_SEND_FLOAT_DEBUG(DefaultChannel, DefaultDevice,
-			&yFinkenFloatController.t, &yFinkenFloatController.pPart,
-			&yFinkenFloatController.iPart, &yFinkenFloatController.dPart,
-			&yFinkenFloatController.previousError,
-			&yFinkenFloatController.output);
+	unsigned int block = nav_block;
+	DOWNLINK_SEND_FLOAT_DEBUG(DefaultChannel, DefaultDevice, &block,
+			&thrust_k_dec1, &thrust_k_dec2, &error_z_k_dec1,
+			&yFinkenFloatController.previousError, &error_z_k_dec2);
 }
 
