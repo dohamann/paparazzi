@@ -34,8 +34,8 @@
 #include "subsystems/datalink/telemetry.h"
 
 struct actuators_model_s {
-	float alpha;
-	float beta;
+	float alpha; ///< pitch-acceleration; sum of alphaComponents
+	float beta;  ///< roll-acceleration; sum of betaComponents
 	float theta;
 	float thrust;
 	// int vsupply_tel; //noch nicht Funktionstauglich
@@ -46,15 +46,16 @@ extern struct actuators_model_s finken_actuators_set_point;
 
 extern bool finken_actuators_take_off;
 
-
 extern void finken_actuators_model_init(void);
 extern void finken_actuators_model_periodic(void);
 
-extern void send_finken_actuators_model_telemetry(struct transport_tx *trans, struct link_device* link);
+extern void send_finken_actuators_model_telemetry(struct transport_tx *trans,
+		struct link_device* link);
 extern float compensate_battery_drop(float thrust_setpoint);
-
+/**
+ * Recalculates the alpha and beta values by summing the alphaComponents and betaComponents
+ */
 extern void updateActuators(void);
-
 extern float alphaComponents[COMP_LENGTH];
 extern float betaComponents[COMP_LENGTH];
 

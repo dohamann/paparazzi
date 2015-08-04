@@ -5,7 +5,6 @@ struct pid_controller yFinkenFloatController;
 
 float oldL, oldR, oldF, oldB;
 float timeStep = 0.03;
-float cap = 15;
 
 void updateDistances() {
 	oldL = finken_sensor_model.distance_d_left;
