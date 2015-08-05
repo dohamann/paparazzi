@@ -42,7 +42,7 @@ void initWallController(struct pid_controller *con) {
 	con->k = RINGBUFFER_SIZE;
 	con->p = 2.5;
 	con->i = 0;
-	con->d = 0.4;
+	con->d = 0.5;
 	float cap = 250;
 	con->min = -cap;
 	con->max = cap;
