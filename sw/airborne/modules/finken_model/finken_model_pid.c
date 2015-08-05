@@ -33,7 +33,7 @@ float adjust(float error, float timeStep, struct pid_controller *con) {
 			res = con->max;
 		}
 	}
-	//res = -res;
+
 	con->output = res;
 	return res;
 }

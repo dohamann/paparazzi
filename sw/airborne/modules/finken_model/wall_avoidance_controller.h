@@ -17,9 +17,20 @@ extern struct pid_controller rightPIDController;
 extern struct pid_controller backPIDController;
 extern struct pid_controller leftPIDController;
 
+/**
+ * Sets parameters of pid-controllers.
+ */
 extern void wall_avoidance_controller_init(void);
+
+/**
+ * Calls all pid-controllers, merges the results and pushes it to finken_actuators_model.
+ * After changing the flight mode it resets the i-part of all PID-controllers to avoid wind-up.
+ */
 extern void wall_avoidance_controller_periodic(void);
 
+/**
+ * Calls the pid_controller.adjust function. Control x and y movements, try to avoid walls.
+ */
 extern float pid_planar(float sonar_dist, struct pid_controller *pid);
 
 #endif /* WALLAVOIDANCECONTROLLER_H_ */

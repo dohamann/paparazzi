@@ -48,11 +48,11 @@ struct sensor_model_s {
   float   velocity_y;
 };
 
-extern struct sensor_model_s finken_sensor_model;
+extern struct sensor_model_s finken_sensor_model;	///< the current sensor measurement
 
-extern void finken_sensor_model_init(void);
-extern void finken_sensor_model_periodic(void);
+extern void finken_sensor_model_init(void);			///< start this module, initialize finken_sensor_model
+extern void finken_sensor_model_periodic(void);		///< is called once every iteration. Filter default values and take every other input.
 
-extern void send_finken_sensor_model_telemetry(struct transport_tx *trans, struct link_device* link);
+extern void send_finken_sensor_model_telemetry(struct transport_tx *trans, struct link_device* link);	///< Send the sensor informations through telemetry.
 
 #endif

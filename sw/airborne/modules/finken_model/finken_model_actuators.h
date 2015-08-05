@@ -38,8 +38,10 @@ struct actuators_model_s {
 	float beta;  	///< roll-acceleration; sum of betaComponents
 	float theta;	///< yaw-acceleration
 	float thrust;	///< 
-	// int vsupply_tel; //noch nicht Funktionstauglich
 };
+
+extern float alphaComponents[COMP_LENGTH];	///< pitch orders from joystick and pid controller
+extern float betaComponents[COMP_LENGTH];	///< roll orders from joystick and pid controller
 
 extern struct actuators_model_s finken_actuators_model;		///< the current movement model of the copter
 extern struct actuators_model_s finken_actuators_set_point;	///< the desired movement model of the copter
@@ -48,15 +50,11 @@ extern void finken_actuators_model_init(void);			///< start this module and begi
 extern void finken_actuators_model_periodic(void);		///< is called every iteration. assign the desired movements to the current movement.
 
 extern void send_finken_actuators_model_telemetry(struct transport_tx *trans,
-		struct link_device* link);
-extern float compensate_battery_drop(float thrust_setpoint);
-/**
- * Recalculates the alpha and beta values by summing the alphaComponents and betaComponents
- */
-extern void updateActuators(void);
-extern float alphaComponents[COMP_LENGTH];
-extern float betaComponents[COMP_LENGTH];
+		struct link_device* link);						///< send the telemetry message with the current finken_actuators_model
+extern float compensate_battery_drop(float thrust_setpoint);	///< compensate different battery voltages, so that the motor output stays the same. Not perfect.
 
-extern float sum(float * array);
+extern void updateActuators(void);		///<  Recalculates the alpha and beta values by summing the alphaComponents and betaComponents
+
+extern float sum(float * array);		///< merge joystick and controller orders.
 
 #endif

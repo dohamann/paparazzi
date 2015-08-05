@@ -8,9 +8,6 @@ struct pid_controller leftPIDController;
 float TOLERABLE_PROXY_DIST = 80; ///< minimum treshold - if less, begin collision avoidance
 float MIN_HEIGHT = 0.15; ///< the minimum altitude before we can begin using sonars
 
-/**
- * Sets parameters of pid-controllers.
- */
 void wall_avoidance_controller_init() {
 	initWallController(&frontPIDController);
 	initWallController(&rightPIDController);
@@ -18,10 +15,6 @@ void wall_avoidance_controller_init() {
 	initWallController(&leftPIDController);
 }
 
-/**
- * Calls all pid-controllers, merges the results and pushes it to finken_actuators_model.
- * After changing the flight mode it resets the i-part of all PID-controllers to avoid wind-up.
- */
 void wall_avoidance_controller_periodic() {
 	if (finken_system_model.reset) {
 		resetAll();
@@ -62,5 +55,5 @@ float max_(float x, float y) {
 
 float pid_planar(float sonar_dist, struct pid_controller *pid) {
 	float error = max_(TOLERABLE_PROXY_DIST - sonar_dist, 0.0);
-	return adjust(error, 0.03, pid);		//return pitch or roll
+	return adjust(error, 0.03, pid);
 }
