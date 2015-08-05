@@ -34,20 +34,18 @@
 #include "subsystems/datalink/telemetry.h"
 
 struct actuators_model_s {
-	float alpha; ///< pitch-acceleration; sum of alphaComponents
-	float beta;  ///< roll-acceleration; sum of betaComponents
-	float theta;
-	float thrust;
+	float alpha; 	///< pitch-acceleration; sum of alphaComponents
+	float beta;  	///< roll-acceleration; sum of betaComponents
+	float theta;	///< yaw-acceleration
+	float thrust;	///< 
 	// int vsupply_tel; //noch nicht Funktionstauglich
 };
 
-extern struct actuators_model_s finken_actuators_model;
-extern struct actuators_model_s finken_actuators_set_point;
+extern struct actuators_model_s finken_actuators_model;		///< the current movement model of the copter
+extern struct actuators_model_s finken_actuators_set_point;	///< the desired movement model of the copter
 
-extern bool finken_actuators_take_off;
-
-extern void finken_actuators_model_init(void);
-extern void finken_actuators_model_periodic(void);
+extern void finken_actuators_model_init(void);			///< start this module and begin sending telemetry messages. 
+extern void finken_actuators_model_periodic(void);		///< is called every iteration. assign the desired movements to the current movement.
 
 extern void send_finken_actuators_model_telemetry(struct transport_tx *trans,
 		struct link_device* link);

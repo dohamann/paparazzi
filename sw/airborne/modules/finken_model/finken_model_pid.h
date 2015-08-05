@@ -42,6 +42,9 @@ struct pid_controller {
 	int k; ///< Size of the ringbuffer
 };
 
+/**
+ * Define the minimal and maximal controller output.
+ */
 extern void setMinMax(float minParam, float maxParam,
 		struct pid_controller *con);
 /**
@@ -52,11 +55,22 @@ extern void setMinMax(float minParam, float maxParam,
  * @param con the controller to adjust
  */
 extern float adjust(float error, float timeStep, struct pid_controller *con);
-extern void initWallController(struct pid_controller *con);
+
 /**
- *
+ * Sets the parameters for wall-avoidance-controllers.
+ * Note that the relatively high d-part also slows the
+ * quadrocopter down when moving away from the wall.
+ */
+extern void initWallController(struct pid_controller *con);
+
+/**
+ * Adds error to ringbuffer
  */
 extern void addIPart(struct pid_controller *con, float iPart);
+
+/**
+ * Sets every entry in the ringbuffer to 0
+ */
 extern void initFloatController(struct pid_controller *con);
 
 #endif /* FINKEN_MODEL_PID_H_ */

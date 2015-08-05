@@ -31,8 +31,6 @@ struct actuators_model_s finken_actuators_set_point;
 float alphaComponents[COMP_LENGTH];
 float betaComponents[COMP_LENGTH];
 
-bool finken_actuators_take_off;
-
 void finken_actuators_model_init(void) {
 	finken_actuators_model.alpha = 0;
 	finken_actuators_model.beta = 0;
@@ -82,13 +80,13 @@ float sum(float * array) {
 }
 
 void updateActuators() {
-//	if (nav_block != 2) 	//not take_off
-//	{
+	if (nav_block != 2) 	//not take_off
+	{
 		finken_actuators_model.beta = sum(betaComponents);
 		finken_actuators_model.alpha = sum(alphaComponents);
-//	} else {
-//		finken_actuators_model.beta = betaComponents[0];
-//		finken_actuators_model.alpha = alphaComponents[0];
-//	}
+	} else {
+		finken_actuators_model.beta = betaComponents[0];
+		finken_actuators_model.alpha = alphaComponents[0];
+	}
 }
 

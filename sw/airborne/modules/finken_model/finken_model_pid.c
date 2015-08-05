@@ -37,11 +37,7 @@ float adjust(float error, float timeStep, struct pid_controller *con) {
 	con->output = res;
 	return res;
 }
-/**
- * Sets the parameters for wall-avoidance-controllers.
- * Note that the relatively high d-part also slows the
- * quadrocopter down when moving away from the wall.
- */
+
 void initWallController(struct pid_controller *con) {
 	con->k = RINGBUFFER_SIZE;
 	con->p = 2.5;
@@ -66,9 +62,6 @@ void initFloatController(struct pid_controller *con) {
 	con->max = cap;
 }
 
-/**
- * Adds error to ringbuffer
- */
 extern void addIPart(struct pid_controller *con, float i_error) {
 	con->index = con->index % con->k;
 	con->ringbuffer[con->index] = i_error;
@@ -79,9 +72,7 @@ extern void addIPart(struct pid_controller *con, float i_error) {
 	con->iPart = sum * con->i;
 	con->index++;
 }
-/**
- * Sets every entry in the ringbuffer to 0
- */
+
 void resetIPart(struct pid_controller *con) {
 	for (int i = 0; i < con->k; i++) {
 		con->ringbuffer[i] = 0;
